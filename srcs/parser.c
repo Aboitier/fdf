@@ -6,7 +6,7 @@
 /*   By: aboitier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/07 21:48:27 by aboitier          #+#    #+#             */
-/*   Updated: 2019/05/28 20:37:46 by aboitier         ###   ########.fr       */
+/*   Updated: 2019/05/30 23:54:40 by aboitier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,13 @@ int		parse_coords(t_fdf **head, int curr_line, char *line)
 	pre = NULL;
 	x = -1;
 	i = -1;
-	if (!((*head)->points[curr_line] = (int *)malloc(sizeof(int)
+	if (!((*head)->parse_p[curr_line] = (int *)malloc(sizeof(int)
 					* ((*head)->cols_nb + 1))))
 		return (-1);
-	(*head)->points[(*head)->cols_nb] = NULL;
+	(*head)->parse_p[(*head)->cols_nb] = NULL;
 	pre = ft_strsplit(line, ' ');
 	while (pre[++i] && x < (*head)->cols_nb)
-		(*head)->points[curr_line][++x] = ft_atoi(pre[i]);
+		(*head)->parse_p[curr_line][++x] = ft_atoi(pre[i]);
 	free(pre);
 	return (0);
 }
@@ -87,7 +87,7 @@ int		post_parser(t_fdf *head)
 
 	curr_line = 0;
 	i = 0;
-	if (!(head->points = (int **)malloc(sizeof(int*) * (head->lines_nb + 1))))
+	if (!(head->parse_p = (int **)malloc(sizeof(int*) * (head->lines_nb + 1))))
 		return (-1);
 	while (head->line[i])
 	{

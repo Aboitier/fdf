@@ -6,7 +6,7 @@
 /*   By: aboitier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/23 16:12:11 by aboitier          #+#    #+#             */
-/*   Updated: 2019/05/30 21:57:36 by aboitier         ###   ########.fr       */
+/*   Updated: 2019/05/31 00:34:56 by aboitier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,28 +59,6 @@ int		mouse_press(int button, int x, int y, void *params)
 	return (0);
 }
 
-int		print_tabs(t_fdf *head)
-{
-	int x = 0;
-	int y = -1;
-
-	while (head->points[++y] && y < head->lines_nb)
-	{
-		while (x < head->cols_nb)
-		{
-			if (head->points[y][x] > 9)
-				printf("%d ", head->points[y][x]);
-			else
-				printf("%d  ", head->points[y][x]);
-			x++;
-		}
-		x = 0;
-		printf("\n");
-	}
-	return (0);
-}
-
-
 //void	line(t_point *data, void *params)
 //{
 //	//	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
@@ -107,22 +85,22 @@ int		print_tabs(t_fdf *head)
 //	}
 //}
 
-void	draw(t_vec *coords, t_fdf *head)
-{
-	int x;
-
-	x = -1;
-	while (coords[++x])
-	{
-		if (x + 1 < head->nb_tvec && coords[x + 1]->z == 0)
-			line_between(coords[x], coords[x + 1], head);
-		if (x + head->cols_nb < head->nb_tvec && (coords[x + head->cols_nb]->z == 0))
-			line_between(coords[x], coords[x + head->cols_nb], head);
-		if (
-	
-	}
-	
-}
+//void	draw(t_vec *coords, t_fdf *head)
+//{
+//	int x;
+//
+//	x = -1;
+//	while (coords[++x])
+//	{
+//		if (x + 1 < head->nb_tvec && coords[x + 1]->z == 0)
+//			line_between(coords[x], coords[x + 1], head);
+//		if (x + head->cols_nb < head->nb_tvec && (coords[x + head->cols_nb]->z == 0))
+//			line_between(coords[x], coords[x + head->cols_nb], head);
+//		if (
+//	
+//	}
+//	
+//}
 
 void	local_to_world(t_fdf *head)
 {
@@ -134,16 +112,12 @@ void	local_to_world(t_fdf *head)
 	mat_scale(global, head->x_scale, head->y_scale, head->z_scale);
 	x = -1;
 	while (++x < head->nb_tvec)
-	{
-		mult_vec_matrix(head->points[x], global,  
-
-
+		mult_vec_matrix(&head->points->local[x], global, &head->points->world[x]);
 }
 
 int		main(int ac, char **av)
 {
 	t_fdf	head;
-	t_vec	*coords;
 	int 	fd;	
 
 	if (ac != 2 || ((fd = open(av[1], O_RDONLY)) == -1))
@@ -155,18 +129,18 @@ int		main(int ac, char **av)
 		ft_putstr("Error in file.\n");
 		return (-1);
 	}
-	coords = fill_struct_coords(head.points, &head);
-	setup_square(&head);
-	printf("x_start = %d\ty_start = %d\n", head.x_start, head.y_start);
-	printf("square_size = %d\tcols_nb = %d\tlines_nb = %d\n\n", head.square_size, head.cols_nb, head.lines_nb);
+	head.points->local = fill_struct_coords(head.parse_p, &head);
+//	printf("x_start = %d\ty_start = %d\n", head.x_start, head.y_start);
+	printf("cols_nb = %d\tlines_nb = %d\n\n", head.cols_nb, head.lines_nb);
 
-	//	fill_pixel(&head, 400, 300, 0x005595);
+	int x = -1;
+	while (++x < head.nb_tvec)
+		printf("head.points.world[x] = %f\t", head.points->world[x].x);
 	//	mlx_put_image_to_window(head.params[0], head.params[1], head.params[2], 0, 0);
 
 	//	mlx_pixel_put(mlx_ptr, win_ptr, x_start, y_start, 0xFF0000);
 
 
-	print_tabs(&head);
 	mlx_key_hook(head.params[1], deal_key, head.params);
 	mlx_hook(head.params[1], 4, 0, mouse_press, head.params);
 	mlx_hook(head.params[1], 17, 0, exit_key, head.params);
