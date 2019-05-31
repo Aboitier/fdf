@@ -6,7 +6,7 @@
 /*   By: aboitier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/15 14:30:55 by aboitier          #+#    #+#             */
-/*   Updated: 2019/05/28 18:03:26 by aboitier         ###   ########.fr       */
+/*   Updated: 2019/05/31 19:50:47 by aboitier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,21 @@ void	mat_rotz(float mat[4][4], float psi)
 	mat[3][3] = 1;
 }
 
+void	mat_rotate(float mat[4][4], float theta, float phi, float psi)
+{
+	float	rotx[4][4];
+	float	roty[4][4];
+	float	rotz[4][4];
+	float	mat1[4][4];
+	float	mat2[4][4];
 
+	mat_rotx(rotx, theta);
+	mat_roty(roty, phi);
+	mat_rotz(rotz, psi);
+	mat_mult(mat, roty, mat1);
+	mat_mult(mat1, rotx, mat2);
+	mat_mult(mat2, rotz, mat);
+}
 
 void	mult_vec_matrix(t_vec *src, float mat[4][4], t_vec *dst)
 {

@@ -6,34 +6,38 @@
 /*   By: aboitier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/07 21:48:27 by aboitier          #+#    #+#             */
-/*   Updated: 2019/05/30 23:54:40 by aboitier         ###   ########.fr       */
+/*   Updated: 2019/05/31 19:28:19 by aboitier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../head.h"
 
-t_vec   *fill_struct_coords(int **data, t_fdf *head)
+int		fill_struct_coords(int **data, t_fdf *head)
 {
-	t_vec   *coords;
+//	t_vec   *coords;
 	int     y;
 	int     x;
 	int     index;
 
 	y = -1;
 	index = - 1;
-	if (!(coords = (t_vec *)malloc(sizeof(t_vec) * (head->nb_tvec))))
-		return (NULL);
+	if (!(head->points = (t_vertex ***)malloc(sizeof(t_vertex **) * (head->nb_tvec))))
+		return (-1);
 	while (++y < head->lines_nb)
 	{
+		if (!(head->points[y] = (t_vertex **)malloc(sizeof(t_vertex *) * (head->cols_nb))))
+			return (-1);
 		x = -1;
 		while (++x < head->cols_nb)
 		{
-			coords[++index].x = x;
-			coords[index].y = y;
-			coords[index].z = (float)data[y][x];
+			head->points[y][x] = get_vertex(x, y, (float)data[y][x]);
+//			coords[++index].x = x;
+//			coords[index].y = y;
+//			coords[index].z = (float)data[y][x];
 		}
 	}
-	return (coords);
+	return (0);
+//	return (coords);
 }
 
 int		check_line_size(char *line, t_fdf *head)

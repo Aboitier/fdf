@@ -6,7 +6,7 @@
 /*   By: aboitier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/23 16:12:11 by aboitier          #+#    #+#             */
-/*   Updated: 2019/05/31 00:34:56 by aboitier         ###   ########.fr       */
+/*   Updated: 2019/05/31 20:05:53 by aboitier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,14 +106,31 @@ void	local_to_world(t_fdf *head)
 {
 	float	global[4][4];
 	int		x;
+	int		y;
 
 	get_id_matrix(global);
 	mat_translate(global, -(head->lines_nb / 2), -(head->cols_nb / 2), 0);
 	mat_scale(global, head->x_scale, head->y_scale, head->z_scale);
-	x = -1;
-	while (++x < head->nb_tvec)
-		mult_vec_matrix(&head->points->local[x], global, &head->points->world[x]);
+	y = -1;
+	while (++y < head->lines_nb)
+	{
+		x = -1;
+		while (++x < head->cols_nb)
+			mult_vec_matrix(head->points[y][x]->local, global, head->points[y][x]->world);
+	}
 }
+
+void	world_to_aligned(t_fdf *head)
+{
+	float	global[4][4];
+	int		x;
+	int		y;
+
+	get_id_matrix(global);
+	mat_rotate(global, head->theta, head->phi, head->psi);
+	mat_scale(global, (WIN_WIDTH * head->scale) / head->cols_nb,
+			(WIN_HEIGHT * head->scale) / head->lines_nb, head->scale);
+	mat_translate(global, (
 
 int		main(int ac, char **av)
 {
@@ -129,13 +146,12 @@ int		main(int ac, char **av)
 		ft_putstr("Error in file.\n");
 		return (-1);
 	}
-	head.points->local = fill_struct_coords(head.parse_p, &head);
+	fill_struct_coords(head.parse_p, &head);
 //	printf("x_start = %d\ty_start = %d\n", head.x_start, head.y_start);
 	printf("cols_nb = %d\tlines_nb = %d\n\n", head.cols_nb, head.lines_nb);
+	local_to_world(&head);
+	printf("hello\n");
 
-	int x = -1;
-	while (++x < head.nb_tvec)
-		printf("head.points.world[x] = %f\t", head.points->world[x].x);
 	//	mlx_put_image_to_window(head.params[0], head.params[1], head.params[2], 0, 0);
 
 	//	mlx_pixel_put(mlx_ptr, win_ptr, x_start, y_start, 0xFF0000);

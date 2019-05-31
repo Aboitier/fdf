@@ -6,7 +6,7 @@
 /*   By: aboitier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/29 18:21:27 by aboitier          #+#    #+#             */
-/*   Updated: 2019/05/31 00:27:11 by aboitier         ###   ########.fr       */
+/*   Updated: 2019/05/31 19:42:08 by aboitier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ typedef struct 	s_fdf
 	char		*image;
 	char		*line;
 	int			**parse_p;
-	t_vertex	*points;
+	t_vertex	***points;
 	int			square_size;
 	float		x_scale;
 	float		y_scale;
@@ -55,7 +55,7 @@ int		parser(int fd, t_fdf *head);
 int		check_line_size(char *line, t_fdf *head);
 int		parse_coords(t_fdf **head, int curr_line, char *line);
 int		post_parser(t_fdf *head);
-t_vec	*fill_struct_coords(int **data, t_fdf *head);
+int		fill_struct_coords(int **data, t_fdf *head);
 
 /************
  *  DRAWING *

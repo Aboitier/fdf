@@ -6,7 +6,7 @@
 /*   By: aboitier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/01 13:20:28 by aboitier          #+#    #+#             */
-/*   Updated: 2019/05/31 00:25:54 by aboitier         ###   ########.fr       */
+/*   Updated: 2019/05/31 19:11:10 by aboitier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ int     init_head(t_fdf *head)
 	head->x_scale = 1;
 	head->y_scale = 1;
 	head->z_scale = 1;
-	if (!(head->points = (t_vertex *)malloc(sizeof(t_vertex))))
-		return (-1);
+//	if (!(head->points = (t_vertex **)malloc(sizeof(t_vertex *))))
+//		return (-1);
 	return (0);
 
 }
