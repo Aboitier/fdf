@@ -6,7 +6,7 @@
 /*   By: aboitier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/29 18:21:27 by aboitier          #+#    #+#             */
-/*   Updated: 2019/05/31 19:42:08 by aboitier         ###   ########.fr       */
+/*   Updated: 2019/06/01 16:28:42 by aboitier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,15 @@ typedef struct 	s_fdf
 	float		x_scale;
 	float		y_scale;
 	float		z_scale;
+	float		scale;
+	float		x_shift;
+	float		y_shift;
+	float		z_shift;
+	float		r;
+	float		g;
+	float		b;
+	int			project;
+	int			focal_dist;
 	int			cols_nb;
 	int			lines_nb;
 	int			nb_tvec;

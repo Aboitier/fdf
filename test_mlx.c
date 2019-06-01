@@ -6,7 +6,7 @@
 /*   By: aboitier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/23 16:12:11 by aboitier          #+#    #+#             */
-/*   Updated: 2019/05/31 20:05:53 by aboitier         ###   ########.fr       */
+/*   Updated: 2019/06/01 18:57:53 by aboitier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,9 +128,108 @@ void	world_to_aligned(t_fdf *head)
 
 	get_id_matrix(global);
 	mat_rotate(global, head->theta, head->phi, head->psi);
-	mat_scale(global, (WIN_WIDTH * head->scale) / head->cols_nb,
-			(WIN_HEIGHT * head->scale) / head->lines_nb, head->scale);
-	mat_translate(global, (
+	mat_scale(global, (WIDTH * head->scale) / head->cols_nb,
+			(HEIGHT * head->scale) / head->lines_nb, head->scale);
+	mat_translate(global, (head->project) ? head->x_shift : head->x_shift
+			+ WIN_WIDTH /2, (head->project) ? head->y_shift : head->y_shit + WIN_HEIGHT / 2,
+			head->z_shift);
+	y = -1;
+	while (++y < head->lines_nb)
+	{
+		x = -1;
+		while (++x < head->cols_nb)
+		{
+			mult_vec_matrix(head->points[y][x]->world, global,
+					head->points[y][x]->aligned);
+			head->points[y][x]->aligned->z = head->project ? 
+				head->points[y][x]->aligned->z : head->points[y][x]->local->z;
+		}
+	}
+}
+
+void	aligned_to_projected(t_fdf *head)
+{
+	float	global[4][4];
+	int		y;
+	int		x;
+
+	get_id_matrix(global);
+	y = -1;
+	while (++y < head->lines_nb)
+	{
+		x = -1;
+		while (++x < head->cols_nb)
+		{
+			if (!head->points[y][x]->aligned->z)
+				head->points[y][x]->aligned->z = 0.001;
+			head->points[y][x]->projected->x = head->focal_dist
+				* head->points[y][x]->aligned->x
+				/ (head->z_max - head->points[y][x]->aligned->z)
+				+ WIDTH / 2;
+			head->points[y][x]->projected->y = head->focal_dist 
+				* head->points[y][x]->aligned->y
+				/ (head->z_max - head->points[y][x]->aligned->z)
+				+ HEIGHT / 2;
+			head->points[y][x]->projected->z = head->points[y][x]->local->z;
+		}
+	}
+}
+
+void	draw_projected(t_fdf *head)
+{
+	int y;
+	int x;
+
+	y = -1;
+	while (++y < head->lines_nb)
+	{
+		x = -1;
+		while (++x < head->cols_nb)
+		{
+			if (x < head->cols_nb - 1)
+				drawline(head, (*head->points[y][x]->projected),
+						*(head->points[y][x + 1]->projected));
+			if (y < head->lines_nb - 1)
+				drawline(head, (*head->points[y][x]->projected),
+						(*head->points[y + 1][x]->projected));
+		}
+	}
+}
+
+void	draw_wireframe(t_fdf *head)
+{
+	int y;
+	int x;
+
+	y = -1;
+	while (++y < head->lines_nb)
+	{
+		x = -1;
+		while (++x < head->cols_nb)
+		{
+			if (x < head->cols_nb - 1)
+				drawline(head, *(head->points[y][x]->aligned),
+						*(head->points[y][x + 1]->aligned));
+			if (y < head->lines_nb - 1)
+				drawline(head, *(head->points[y][x]->aligned),
+						*(head->points[y + 1][x]->aligned));
+		}
+	}
+}
+
+void	full_redraw(t_fdf *head)
+{
+	local_to_world(head);
+	redraw(head);
+}
+
+void	redraw(t_fdf *head)
+{
+	world_to_aligned(head);
+	aligned_to_projected(head);
+	mlx_clear_window(head->params[0], head->params[1]);
+	head->project ? draw_projected(head) : draw_wireframe(head);
+}
 
 int		main(int ac, char **av)
 {
